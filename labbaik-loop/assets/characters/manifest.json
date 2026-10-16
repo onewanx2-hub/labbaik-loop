@@ -1,0 +1,22 @@
+{
+  "_help": "ใส่ชื่อไฟล์โมเดลที่อยู่ในโฟลเดอร์เดียวกันนี้ เว้นว่าง (null) ไว้ได้ ระบบจะใช้หุ่นจำลองแทน ดู README.md ในโฟลเดอร์นี้",
+  "height": 1.72,
+  "scale": 1,
+  "rotateY": 0,
+  "tintMaterial": ["cloth", "thobe", "abaya"],
+  "models": {
+    "male_travel": null,
+    "male_ihram": null,
+    "male_ihram_idtiba": null,
+    "female_travel": null,
+    "female_ihram": null
+  },
+  "animations": {
+    "idle": null,
+    "walk": null,
+    "run": null,
+    "ruku": null,
+    "sujud": null,
+    "julus": null
+  }
+}

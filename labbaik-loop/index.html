@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>labbaik-loop · จำลองอุมเราะห์ 3 มิติ</title>
+<meta name="description" content="Muslim travel & journey — ฝึกทำอุมเราะห์ครบ 9 ขั้นตอน เดินจริงรอบมัสยิดอัลฮะรอมแบบ 3 มิติ">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#111111">
+<meta name="application-name" content="labbaik-loop">
+<meta name="apple-mobile-web-app-title" content="labbaik-loop">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="labbaik-loop">
+<meta property="og:title" content="labbaik-loop · จำลองอุมเราะห์ 3 มิติ">
+<meta property="og:description" content="ฝึกทำอุมเราะห์ครบ 9 ขั้นตอน เดินจริงรอบมัสยิดอัลฮะรอมแบบ 3 มิติ">
+<meta property="og:url" content="https://labbaik-loop.netlify.app/">
+<meta property="og:image" content="https://labbaik-loop.netlify.app/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Anuphan:wght@300..700&family=Inter:wght@500;600&family=Kanit:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://esm.sh/three@0.170.0",
+    "three/addons/": "https://esm.sh/three@0.170.0/examples/jsm/",
+    "3d-tiles-renderer": "https://esm.sh/3d-tiles-renderer@0.5.3?deps=three@0.170.0",
+    "3d-tiles-renderer/plugins": "https://esm.sh/3d-tiles-renderer@0.5.3/plugins?deps=three@0.170.0"
+  }
+}
+</script>
+</head>
+<body>
+<div class="app" id="app" data-view="studio">
+
+  <!-- ฉาก 3 มิติเต็มพื้นหลัง -->
+  <section class="stage" id="center">
+    <canvas id="gl" tabindex="0" aria-label="ฉาก 3 มิติ"></canvas>
+    <div class="shade" aria-hidden="true"></div>
+
+    <div id="studio-ui">
+      <div class="studio-bar">
+        <div class="pillset"><button data-act="focus" data-v="face" aria-pressed="false" data-icon="face">ใบหน้า</button><button data-act="focus" data-v="body" aria-pressed="true" data-icon="user">ทั้งตัว</button></div>
+        <div class="pillset"><button data-act="cam" data-v="front" aria-pressed="true">หน้า</button><button data-act="cam" data-v="45" aria-pressed="false">45°</button><button data-act="cam" data-v="side" aria-pressed="false">ข้าง</button><button data-act="cam" data-v="back" aria-pressed="false">หลัง</button><button data-act="cam" data-v="spin" aria-pressed="false" data-icon="rotate">หมุน</button></div>
+        <div class="pillset"><button data-act="anim" data-v="idle" aria-pressed="true" data-icon="stand">นิ่ง</button><button data-act="anim" data-v="walk" aria-pressed="false" data-icon="walk">เดิน</button><button data-act="anim" data-v="run" aria-pressed="false" data-icon="run">วิ่ง</button></div>
+        <div class="pillset round"><button data-act="zoom-out" aria-label="ซูมออก" data-icon="minus"></button><button data-act="zoom-in" aria-label="ซูมเข้า" data-icon="plus"></button></div>
+      </div>
+      <p class="studio-hint">ลากตัวละครเพื่อหมุน · เลื่อนล้อเมาส์เพื่อซูม</p>
+    </div>
+
+    <div class="hud" id="hud" hidden>
+      <section class="qcard glass" id="qcard"></section>
+      <div class="tr-tools">
+        <canvas id="mini" width="296" height="296" aria-label="แผนที่ย่อ"></canvas>
+        <div class="tools">
+          <button class="tool" data-act="map" aria-label="แผนที่ (M)" data-tip="แผนที่ · M" data-icon="map"></button>
+          <button class="tool" data-act="auto" aria-pressed="false" aria-label="นำทางอัตโนมัติ (F)" data-tip="นำทาง · F" data-icon="nav"></button>
+          <button class="tool" data-act="fp" aria-pressed="false" aria-label="มุมมองสายตา (V)" data-tip="มุมมองสายตา · V" data-icon="eye"></button>
+          <button class="tool" data-act="night" aria-pressed="false" aria-label="สลับกลางวันหรือกลางคืน" data-tip="กลางวัน/กลางคืน" data-icon="moon"></button>
+          <button class="tool" data-act="zoom-in" aria-label="ซูมเข้า" data-tip="ซูมเข้า" data-icon="plus"></button>
+          <button class="tool" data-act="zoom-out" aria-label="ซูมออก" data-tip="ซูมออก" data-icon="minus"></button>
+        </div>
+      </div>
+      <div class="toast glass" id="toast" hidden></div>
+      <div class="duabar glass" id="duabar" hidden></div>
+      <div class="status glass" id="status" hidden></div>
+      <div class="prompt" id="prompt" hidden></div>
+      <div class="place glass" id="place" hidden></div>
+      <div class="keys glass"><b>W A S D</b> เดิน · <b>Shift</b> วิ่ง · ลากเมาส์หมุน/เงยมอง · <b>V</b> มุมมองสายตา · <b>E</b> ทำพิธี · <b>T</b> ตัลบียะฮ์ · <b>F</b> นำทาง · <b>M</b> แผนที่</div>
+      <div class="touch">
+        <div class="joy" id="joy" aria-label="จอยสติ๊กเดิน"><div class="knob"></div></div>
+        <div class="tbtns">
+          <button data-act="run" aria-pressed="false" data-icon="run">วิ่ง</button>
+          <button data-act="talbiyah" data-icon="star">ตัลบียะฮ์</button>
+          <button data-act="auto" aria-pressed="false" data-icon="nav">นำทาง</button>
+          <button data-act="map" data-icon="map">แผนที่</button>
+        </div>
+      </div>
+      <div class="loading glass" id="loading" hidden><span class="spin" aria-hidden="true"></span>กำลังโหลดแผนที่ 3 มิติ…</div>
+      <p class="attrib" id="attrib" hidden></p>
+    </div>
+    <div class="rotate-tip" aria-hidden="true">หมุนจอเป็นแนวนอนเพื่อเล่นสะดวกขึ้น</div>
+    <div class="fade" id="fade"></div>
+  </section>
+
+  <!-- แถบบน -->
+  <header class="topbar">
+    <button class="brandbtn" data-act="go" data-i="0" aria-label="labbaik-loop กลับหน้าแรก" id="logo"></button>
+    <div class="brand"><b>labbaik-loop</b><small>Muslim travel &amp; journey</small></div>
+    <div class="spacer"></div>
+    <div class="presence"><span class="pres-title" id="pres-title"></span><span class="pres-sub" id="pres-sub"></span></div>
+    <button class="fsbtn" data-act="fullscreen" id="fsbtn" aria-label="เต็มจอ" data-icon="expand"></button>
+    <button class="uibtn" data-act="ui" id="uibtn" aria-label="ซ่อนหรือแสดงเมนู (H)" data-tip="ซ่อน/แสดงเมนู · H"></button>
+    <button class="avatar" data-act="go" data-i="0" aria-label="ตัวละครของคุณ"><span id="avatar-initial">อ</span><i class="dot" aria-hidden="true"></i></button>
+  </header>
+
+  <!-- แถบไอคอนขั้นตอน -->
+  <nav class="rail" aria-label="ขั้นตอนอุมเราะห์">
+    <div class="rail-group" id="stepper"></div>
+    <button class="railbtn solo" data-act="theme" aria-label="สลับโหมดสว่างหรือมืด" data-tip="สว่าง / มืด" data-icon="sun"></button>
+  </nav>
+
+  <!-- เนื้อหา: หัวข้อใหญ่ · แผงควบคุม · การ์ดแถวล่าง -->
+  <main class="content">
+    <section class="hero" id="left"></section>
+    <aside class="panel glass" id="right"></aside>
+    <section class="cards" id="cards"></section>
+  </main>
+</div>
+
+<div class="modal" id="mapm" hidden>
+  <div class="mcard glass mapcard">
+    <div class="map-head"><div><p class="eyebrow">แผนที่</p><h2>เลือกที่หมายเพื่อเดินทาง</h2></div>
+      <div class="maptools"><button class="chipbtn" data-act="mapzoom" data-z="city">ทั้งเมือง</button><button class="chipbtn" data-act="mapzoom" data-z="haram">รอบฮะรอม</button><button class="iconbtn" data-act="close" aria-label="ปิด" data-icon="close"></button></div></div>
+    <div class="map-body"><canvas id="bigmap" aria-label="แผนที่ คลิกจุดเพื่อเดินทาง"></canvas><div class="plist" id="plist"></div></div>
+  </div>
+</div>
+<div class="modal" id="certm" hidden><div class="mcard glass" id="certc"></div></div>
+
+<div class="filewarn" id="filewarn" hidden>
+  <div class="mcard glass">
+    <h2>ต้องเปิดผ่านเซิร์ฟเวอร์ในเครื่อง</h2>
+    <p>เบราว์เซอร์ไม่อนุญาตให้เปิดไฟล์นี้ด้วยการดับเบิลคลิกโดยตรง ให้ดับเบิลคลิกไฟล์ <b>เปิดเว็บ.bat</b> ในโฟลเดอร์โปรเจกต์แทน แล้วเว็บจะเปิดขึ้นเองที่ http://localhost:8080</p>
+  </div>
+</div>
+<script>
+if (location.protocol === 'file:') document.getElementById('filewarn').hidden = false;
+// เปิดด้วย ?debug เพื่อดูข้อความแจ้งเตือนและข้อผิดพลาดบนจอ
+if (/[?&]debug/.test(location.search)) {
+  const box = document.createElement('pre');
+  box.style.cssText = 'position:fixed;left:0;bottom:0;z-index:99;max-height:40vh;overflow:auto;margin:0;padding:8px;background:rgba(0,0,0,.85);color:#9ff;font:12px monospace;white-space:pre-wrap;max-width:100%';
+  document.addEventListener('DOMContentLoaded', () => document.body.appendChild(box));
+  const log = (t, a) => { box.textContent += `[${t}] ` + [...a].map(x => x && x.stack ? x.message : typeof x === 'object' ? JSON.stringify(x) : String(x)).join(' ') + '\n'; };
+  for (const k of ['warn', 'error', 'info']) { const o = console[k].bind(console); console[k] = (...a) => { log(k, a); o(...a); }; }
+  window.addEventListener('error', e => log('onerror', [e.message + ' @' + e.lineno]));
+  window.addEventListener('unhandledrejection', e => log('reject', [e.reason]));
+}
+</script>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

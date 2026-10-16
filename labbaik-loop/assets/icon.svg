@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- labbaik-loop app icon: สัญลักษณ์สีดำบนพื้นครีม -->
+  <rect width="100" height="100" rx="23" fill="#F8F6EF"/>
+  <g transform="translate(18 18) scale(.64)">
+    <path d="M50 4 90 24v52L50 96 10 76V24Z" fill="#111111"/>
+    <path d="M10 33 50 53 90 33v7L50 60 10 40Z" fill="#F8F6EF"/>
+    <path d="M10 45 50 65 90 45v3.5L50 68.5 10 48.5Z" fill="#F8F6EF"/>
+    <path d="M71 58 79 54v22.5L71 80.5Z" fill="#F8F6EF"/>
+  </g>
+</svg>
